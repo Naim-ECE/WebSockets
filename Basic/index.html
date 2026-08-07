@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Websocket Live Test Rig</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background-color: #000000;
+        color: #faf5f5;
+      }
+      #log {
+        border: 1px solid #ccc;
+        padding: 10px;
+        height: 300px;
+        overflow-y: scroll;
+        background-color: #444444;
+      }
+      .status-on {
+        color: rgb(31, 255, 31);
+      }
+      .status-off {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Websocket Live Test Rig</h1>
+    <p id="status" class="status off">Connection: Disconnected</p>
+
+    <form id="message-form">
+      <input
+        type="text"
+        id="message-input"
+        placeholder="Enter message..."
+        required
+      />
+      <button type="submit">Send</button>
+    </form>
+
+    <h3>Live stream logs:</h3>
+    <pre id="log"></pre>
+  </body>
+  <script>
+    const statusEl = document.getElementById("status");
+    const log = document.getElementById("log");
+    const input = document.getElementById("message-input");
+
+    // 1. Initiate the Handshake
+    const socket = new WebSocket("ws://localhost:8080");
+
+    const appendLog = (label, message) => {
+      // Implementation of the collapsed function
+      const entry = `${new Date().toLocaleTimeString()} ${label}: ${message}\n`;
+      log.textContent += entry;
+      log.scrollTop = log.scrollHeight; // Auto-scroll to bottom
+    };
+
+    socket.addEventListener("open", () => {
+      statusEl.textContent = "CONNECTED: ws://localhost:8080";
+      statusEl.className = "status-on";
+      appendLog("[SYSTEM]", "Tunnel Established.");
+    });
+
+    socket.addEventListener("close", () => {
+      statusEl.textContent = "DISCONNECTED";
+      statusEl.className = "status-off";
+      appendLog("[SYSTEM]", "Tunnel Collapsed.");
+    });
+
+    socket.addEventListener("message", (event) => {
+      appendLog("[RECEIVED]", event.data);
+    });
+
+    document.getElementById("message-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      if (socket.readyState !== WebSocket.OPEN) {
+        appendLog("[ERROR]", "Cannot send message: WebSocket is not open.");
+        return;
+      }
+      // Implementation of the collapsed block:
+      const msg = input.value.trim();
+      socket.send(msg);
+      appendLog("[SENT]", msg);
+      input.value = "";
+    });
+  </script>
+</html>
