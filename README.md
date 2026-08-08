@@ -33,6 +33,16 @@
 14. Redis
 15. Deployment
 
+## Important Images
+
+<img src="https://raw.githubusercontent.com/Naim-ECE/WebSockets/main/Shots/Websockets.png" alt="WebSockets Image" height="auto" width="250">
+<br>
+<img src="https://raw.githubusercontent.com/Naim-ECE/WebSockets/main/Shots/WebRTC.png" alt="WebRTC Image" height="auto" width="250">
+<br>
+<img src="https://raw.githubusercontent.com/Naim-ECE/WebSockets/main/Shots/WebTransport.png" alt="WebTransport Image" height="auto" width="250">
+<br>
+<img src="https://raw.githubusercontent.com/Naim-ECE/WebSockets/main/Shots/ServerSentEvents.png" alt="SSE Image" height="auto" width="250">
+
 ## WebSocket Lifecycle
 
 ```text
@@ -47,3 +57,4 @@ OPEN
 Send / Receive
   ↓
 CLOSE
+```
