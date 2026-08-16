@@ -30,18 +30,8 @@ export const createMatchSchema = z
     sport: z.string().min(1),
     homeTeam: z.string().min(1),
     awayTeam: z.string().min(1),
-    startTime: z
-      .string()
-      .refine(isValidIsoDateString, {
-        message: "startTime must be a valid ISO date string",
-      })
-      .transform((str) => new Date(str)), // ✅ Automatically converts to Date
-    endTime: z
-      .string()
-      .refine(isValidIsoDateString, {
-        message: "endTime must be a valid ISO date string",
-      })
-      .transform((str) => new Date(str)), // ✅ Automatically converts to Date
+    startTime: z.iso.datetime(),
+    endTime: z.iso.datetime(),
     homeScore: z.coerce.number().int().nonnegative().optional(),
     awayScore: z.coerce.number().int().nonnegative().optional(),
   })
