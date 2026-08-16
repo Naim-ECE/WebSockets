@@ -16,7 +16,7 @@ matchesRouter.get("/", async (req, res) => {
   if (!parsed.success) {
     return res.status(400).json({
       errors: "Invalid query parameters",
-      details: JSON.stringify(parsed.error),
+      details: parsed.error.issues,
     });
   }
   const limit = Math.min(parsed.data.limit ?? 50, MAX_LIMIT);
@@ -39,10 +39,12 @@ matchesRouter.post("/", async (req, res) => {
   if (!parsed.success) {
     return res.status(400).json({
       errors: "Invalid request body",
-      details: JSON.stringify(parsed.error),
+      details: parsed.error.issues,
     });
   }
-  const { startTime, endTime, homeScore, awayScore } = parsed.data;
+  const {
+    data: { startTime, endTime, homeScore, awayScore },
+  } = parsed;
 
   try {
     const status = getMatchStatus(startTime, endTime);
@@ -51,11 +53,9 @@ matchesRouter.post("/", async (req, res) => {
     const [event] = await db
       .insert(matches)
       .values({
-        sport: parsed.data.sport,
-        homeTeam: parsed.data.homeTeam,
-        awayTeam: parsed.data.awayTeam,
-        startTime: startTime,
-        endTime: endTime,
+        ...parsed.data,
+        startTime: new Date(startTime),
+        endTime: new Date(endTime),
         homeScore: homeScore ?? 0,
         awayScore: awayScore ?? 0,
         status: getMatchStatus(startTime, endTime),
