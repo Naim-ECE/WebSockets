@@ -42,9 +42,7 @@ matchesRouter.post("/", async (req, res) => {
       details: parsed.error.issues,
     });
   }
-  const {
-    data: { startTime, endTime, homeScore, awayScore },
-  } = parsed;
+  const { startTime, endTime, homeScore, awayScore } = parsed.data;
 
   try {
     const status = getMatchStatus(startTime, endTime);
@@ -61,10 +59,21 @@ matchesRouter.post("/", async (req, res) => {
         status: getMatchStatus(startTime, endTime),
       })
       .returning();
+
+    const broadcastMatchCreated = req.app.locals.broadcastMatchCreated;
+    if (broadcastMatchCreated) {
+      broadcastMatchCreated(event);
+      console.log("📡 Broadcasted match created:", event.id);
+    } else {
+      console.log("⚠️ broadcastMatchCreated not available");
+    }
+
     res.status(201).json({ data: event });
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Internal server error", message: error.message });
+    console.error("❌ Error creating match:", error);
+    res.status(500).json({
+      error: "Internal server error",
+      message: error.message,
+    });
   }
 });
