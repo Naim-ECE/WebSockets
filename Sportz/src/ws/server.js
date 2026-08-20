@@ -17,10 +17,11 @@ function broadcastJson(data) {
 
   let sentCount = 0;
   for (const client of wss.clients) {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify(data));
-      sentCount++;
+    if (client.readyState !== WebSocket.OPEN) {
+      continue;
     }
+    client.send(JSON.stringify(data));
+    sentCount++;
   }
   console.log(`📡 Sent to ${sentCount} clients`);
 }
@@ -43,6 +44,10 @@ export function attachWebSocketServer(server) {
   });
 
   wss.on("connection", (socket) => {
+    socket.isAlive = true;
+    socket.on("pong", () => {
+      socket.isAlive = true;
+    });
     console.log("🔌 New WebSocket client connected!");
     console.log("📊 Client readyState:", socket.readyState);
     socket.send("Hello from server - plain text!");
@@ -76,6 +81,21 @@ export function attachWebSocketServer(server) {
       console.log("🔌 WebSocket client disconnected");
     });
     socket.on("error", console.error);
+  });
+
+  const interval = setInterval(() => {
+    wss.clients.forEach((ws) => {
+      if (ws.isAlive === false) {
+        console.log("🔌 Terminating dead client");
+        return ws.terminate();
+      }
+      ws.isAlive = false;
+      ws.ping();
+    });
+  }, 30000);
+
+  wss.on("close", () => {
+    clearInterval(interval);
   });
 
   function broadcastMatchCreated(match) {
