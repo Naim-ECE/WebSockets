@@ -1,4 +1,5 @@
 import { WebSocketServer, WebSocket } from "ws";
+import { wsArcjet } from "../arcjet.js";
 let wss = null; // 🔥 FIX: Store globally so we can access it
 
 function sendJson(socket, data) {
@@ -43,7 +44,27 @@ export function attachWebSocketServer(server) {
     maxPayload: 1024 * 1024, // 1MB
   });
 
-  wss.on("connection", (socket) => {
+  wss.on("connection", async (socket, req) => {
+    if (wsArcjet) {
+      try {
+        const decision = await wsArcjet.protect(req);
+        if (decision.isDenied()) {
+          if (decision.reason.isRateLimit()) {
+            const code = decision.reason.isRateLimit() ? 1013 : 1008; // 1013: Try Again Later, 1008: Policy Violation
+            const reason = decision.reason.isRateLimit()
+              ? "Too Many Requests"
+              : "Policy Violation";
+            socket.close(code, reason);
+            return;
+          }
+        }
+      } catch (error) {
+        console.error("Error in Arcjet WebSocket security middleware:", error);
+        socket.close(1011, "Service Unavailable"); // 1011: Internal Error
+        return;
+      }
+    }
+
     socket.isAlive = true;
     socket.on("pong", () => {
       socket.isAlive = true;
