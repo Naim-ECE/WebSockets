@@ -44,27 +44,57 @@ export function attachWebSocketServer(server) {
     maxPayload: 1024 * 1024, // 1MB
   });
 
-  wss.on("connection", async (socket, req) => {
-    if (wsArcjet) {
-      try {
-        const decision = await wsArcjet.protect(req);
-        if (decision.isDenied()) {
-          if (decision.reason.isRateLimit()) {
-            const code = decision.reason.isRateLimit() ? 1013 : 1008; // 1013: Try Again Later, 1008: Policy Violation
-            const reason = decision.reason.isRateLimit()
-              ? "Too Many Requests"
-              : "Policy Violation";
-            socket.close(code, reason);
-            return;
-          }
-        }
-      } catch (error) {
-        console.error("Error in Arcjet WebSocket security middleware:", error);
-        socket.close(1011, "Service Unavailable"); // 1011: Internal Error
-        return;
-      }
+  server.on("upgrade", async (req, socket, head) => {
+    if (!wsArcjet) {
+      wss.handleUpgrade(req, socket, head, (ws) =>
+        wss.emit("connection", ws, req),
+      );
+      return;
     }
 
+    try {
+      const decision = await wsArcjet.protect(req);
+
+      if (decision.isDenied()) {
+        const isRateLimit = decision.reason?.isRateLimit?.() ?? false;
+        const statusCode = isRateLimit ? 429 : 403;
+        const statusText = isRateLimit ? "Too Many Requests" : "Forbidden";
+        const body = statusText;
+
+        socket.write(
+          [
+            `HTTP/1.1 ${statusCode} ${statusText}`,
+            "Connection: close",
+            "Content-Type: text/plain; charset=utf-8",
+            `Content-Length: ${Buffer.byteLength(body)}`,
+            "",
+            "",
+            body,
+          ].join("\r\n"),
+        );
+        socket.destroy();
+        return;
+      }
+
+      wss.handleUpgrade(req, socket, head, (ws) =>
+        wss.emit("connection", ws, req),
+      );
+    } catch (error) {
+      console.error("Error in Arcjet WebSocket security middleware:", error);
+      socket.write(
+        [
+          "HTTP/1.1 503 Service Unavailable",
+          "Connection: close",
+          "Content-Length: 0",
+          "",
+          "",
+        ].join("\r\n"),
+      );
+      socket.destroy();
+    }
+  });
+
+  wss.on("connection", async (socket, req) => {
     socket.isAlive = true;
     socket.on("pong", () => {
       socket.isAlive = true;
