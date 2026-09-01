@@ -5,6 +5,7 @@ import { matchesRouter } from "./routes/matches.js";
 import { attachWebSocketServer } from "./ws/server.js";
 import { securityMiddleware } from "./arcjet.js";
 import http from "http";
+import { commentaryRouter } from "./routes/commentary.js";
 
 const app = express();
 const PORT = Number(process.env.PORT) || 8000;
@@ -13,8 +14,10 @@ const HOST = process.env.HOST || "0.0.0.0";
 app.use(express.json());
 const server = http.createServer(app);
 
-const { broadcastMatchCreated } = attachWebSocketServer(server);
+const { broadcastMatchCreated, broadcastCommentary } =
+  attachWebSocketServer(server);
 app.locals.broadcastMatchCreated = broadcastMatchCreated;
+app.locals.broadcastCommentary = broadcastCommentary;
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to the Sportz WebSocket server!" });
@@ -23,6 +26,7 @@ app.get("/", (req, res) => {
 app.use(securityMiddleware()); // Apply the security middleware to all routes
 
 app.use("/matches", matchesRouter);
+app.use("/matches/:id/commentary", commentaryRouter);
 
 server.listen(PORT, HOST, () => {
   const baseUrl =
