@@ -118,8 +118,11 @@ export function attachWebSocketServer(server) {
         broadcastJson({ type: "match_created", data: match });
       },
       broadcastCommentary: (matchId, commentary) => {
-        broadcastJson({ type: "commentary", data: { matchId, commentary } });
-      },
+        broadcastToMatch(matchId, {
+          type: "commentary",
+          data: { matchId, commentary },
+        });
+      }
     };
   }
 
