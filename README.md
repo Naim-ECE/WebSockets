@@ -58,3 +58,6 @@ Send / Receive
   ↓
 CLOSE
 ```
+
+## io -> whole circuit (a set of clients)
+## socket -> individual client
