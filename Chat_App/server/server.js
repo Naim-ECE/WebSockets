@@ -27,10 +27,11 @@ io.on("connection", (socket) => {
   // socket.emit("Welcome", `Welcome to the server! to ID: ${socket.id}`);
   // socket.broadcast.emit("Welcome", `${socket.id} has joined the chat`);
 
-  socket.on("message", (data) => {
-    console.log(data);
+  socket.on("message", ({ messages, room }) => {
+    console.log(messages, room);
     // io.emit("receive-message", data);
-    socket.broadcast.emit("receive-message", data);
+    // socket.broadcast.emit("receive-message", data);
+    socket.to(room).emit("receive-message", messages); // send message to all clients in the room
   });
 
   socket.on("disconnect", () => {

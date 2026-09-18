@@ -1,6 +1,13 @@
 import { useMemo, useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import { Button, Container, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 export default function App() {
   const socket = useMemo(() => io("http://localhost:3000"), []);
@@ -8,6 +15,9 @@ export default function App() {
   const [messages, setMessages] = useState("");
   const [room, setRoom] = useState("");
   const [socketId, setSocketId] = useState("");
+  const [receivedMessages, setReceivedMessages] = useState([]);
+
+  console.log("Received messages:", receivedMessages);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -23,6 +33,7 @@ export default function App() {
     });
     socket.on("receive-message", (data) => {
       console.log("Received message:", data);
+      setReceivedMessages((prev) => [...prev, data]);
     });
     socket.on("Welcome", (message) => {
       console.log(message);
@@ -35,6 +46,14 @@ export default function App() {
 
   return (
     <Container maxWidth="sm">
+      {/* <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      /> */}
       <Typography variant="h4" align="center" gutterBottom>
         Welcome to the Chat App! Open the console to see the connection status
         and messages from the server.
@@ -67,6 +86,20 @@ export default function App() {
           Send
         </Button>
       </form>
+
+      <Stack>
+        {receivedMessages.map((msg, index) => (
+          <Typography
+            key={index}
+            variant="body1"
+            gutterBottom
+            color="textSecondary"
+            component="p"
+          >
+            {msg}
+          </Typography>
+        ))}
+      </Stack>
     </Container>
   );
 }
