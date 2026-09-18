@@ -22,10 +22,20 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  console.log("A user connected");
+  // console.log("A user connected");
   console.log("Socket ID:", socket.id);
-  socket.emit("Welcome", `Welcome to the server! to ID: ${socket.id}`);
-  socket.broadcast.emit("Welcome", `${socket.id} has joined the chat`);
+  // socket.emit("Welcome", `Welcome to the server! to ID: ${socket.id}`);
+  // socket.broadcast.emit("Welcome", `${socket.id} has joined the chat`);
+
+  socket.on("message", (data) => {
+    console.log(data);
+    // io.emit("receive-message", data);
+    socket.broadcast.emit("receive-message", data);
+  });
+
+  socket.on("disconnect", () => {
+    console.log(`User disconnected ${socket.id}`);
+  });
 });
 
 server.listen(PORT, () => {
