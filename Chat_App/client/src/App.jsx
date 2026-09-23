@@ -10,14 +10,22 @@ import {
 } from "@mui/material";
 
 export default function App() {
-  const socket = useMemo(() => io("http://localhost:3000"), []);
+  const socket = useMemo(() => io("http://localhost:3000",{
+    withCredentials: true,
+  }), []);
 
+  const [receivedMessages, setReceivedMessages] = useState([]);
   const [messages, setMessages] = useState("");
   const [room, setRoom] = useState("");
   const [socketId, setSocketId] = useState("");
-  const [receivedMessages, setReceivedMessages] = useState([]);
 
   console.log("Received messages:", receivedMessages);
+
+  const joinRoomHandler = (e) => {
+    e.preventDefault();
+    socket.emit("join-room", room);
+    setRoom("");
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -62,6 +70,22 @@ export default function App() {
       <Typography variant="h6" align="center" gutterBottom>
         Your Socket ID: {socketId}
       </Typography>
+
+      <form onSubmit={joinRoomHandler}>
+        <h3>Join Room</h3>
+        <TextField
+          value={room}
+          onChange={(e) => setRoom(e.target.value)}
+          id="outlined-basic"
+          label="Room Name"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+        ></TextField>
+        <Button type="submit" variant="contained" color="primary">
+          Join Room
+        </Button>
+      </form>
 
       <form action="" onSubmit={handleSubmit}>
         <TextField
