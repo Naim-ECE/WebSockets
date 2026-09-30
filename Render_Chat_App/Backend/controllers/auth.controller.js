@@ -43,12 +43,38 @@ export const signup = async (req, res) => {
   }
 };
 
-export const login = (req, res) => {
-  // Implement your login logic here
-  res.send("Login route");
+export const login = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    const user = await User.findOne({ username });
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch || !user) {
+      return res.status(400).json({ message: "Invalid username or password" });
+    }
+
+    generateTokenAndSetCookie(user._id, res);
+    res.status(200).json({
+      _id: user._id,
+      fullName: user.fullName,
+      username: user.username,
+      password: user.password,
+      gender: user.gender,
+      profilePicture: user.profilePicture,
+    });
+  } catch (error) {
+    console.error("Error in login:", error);
+    res.status(500).send("Internal Server Error");
+  }
 };
 
-export const logout = (req, res) => {
-  // Implement your logout logic here
-  res.send("Logout route");
+export const logout = async (req, res) => {
+  try {
+    res.clearCookie("token", { maxAge: 0 });
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Error in logout:", error);
+    res.status(500).send("Internal Server Error");
+  }
 };
