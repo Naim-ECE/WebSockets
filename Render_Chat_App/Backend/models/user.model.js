@@ -1,33 +1,38 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
-  fullName: {
-    type: String,
-    required: true,
-  },
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  gender: {
-    type: String,
-    required: true,
-    enum: ["Male", "Female"],
-  },
-  profilePicture: {
-    type: String,
-    default: function () {
-      return this.gender === "Male"
-        ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQt2KTkSSFRWMfy3Hr_XjbHbs2dnoXoeu_Cb242tzcMug&s"
-        : "https://png.pngtree.com/png-vector/20241124/ourlarge/pngtree-detailed-anime-portrait-of-a-female-character-png-image_14191504.png";
+const userSchema = new mongoose.Schema(
+  {
+    fullName: {
+      type: String,
+      required: true,
+    },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    gender: {
+      type: String,
+      required: true,
+      enum: ["Male", "Female"],
+    },
+    profilePicture: {
+      type: String,
+      default: function () {
+        return this.gender === "Male"
+          ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQt2KTkSSFRWMfy3Hr_XjbHbs2dnoXoeu_Cb242tzcMug&s"
+          : "https://png.pngtree.com/png-vector/20241124/ourlarge/pngtree-detailed-anime-portrait-of-a-female-character-png-image_14191504.png";
+      },
     },
   },
-});
+
+  // createdAt and updatedAt fields will be automatically added to the schema => Member since 2024-06-10
+  { timestamps: true },
+);
 
 const User = mongoose.model("User", userSchema);
 export default User;
