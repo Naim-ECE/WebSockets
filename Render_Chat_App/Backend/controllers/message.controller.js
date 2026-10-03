@@ -40,3 +40,28 @@ export const sendMessage = async (req, res) => {
     console.error(error.message);
   }
 };
+
+export const getMessages = async (req, res) => {
+  try {
+    const { id: userToChatId } = req.params;
+    const senderId = req.user._id;
+
+    const conversation = await Conversation.findOne({
+      participants: { $all: [senderId, userToChatId] },
+    }).populate("messages"); // Populate the messages field with the actual message documents not the array of message IDs
+
+    if (!conversation) {
+      return res.status(404).json({ message: "No conversation found" });
+    }
+
+    res
+      .status(200)
+      .json({
+        message: "Messages retrieved successfully",
+        data: conversation.messages,
+      });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+    console.error(error.message);
+  }
+};
