@@ -6,3 +6,29 @@ body {
     linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
     url("/bg.jpg") no-repeat center / cover fixed;
 }
+
+/* 1. For Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+}
+
+::-webkit-scrollbar-track {
+  background: #555;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #121212;
+  border-radius: 5px;
+  transition: all 0.5s ease-in-out; /* The animation attempt */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #242424;
+}
+
+/* 2. For Firefox (Standard CSS) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3f8031 #293162;
+}
