@@ -5,7 +5,7 @@ export default function Login() {
     <div className="flex flex-col items-center justify-center min-w-96 mx-auto">
       <div className="shadow-md w-full bg-yellow-700/20 rounded-lg backdrop-blur-lg border border-gray-100 p-6">
         <h1 className="text-3xl font-semibold text-center text-gray-300">
-          Login
+          Login to
           <span className="text-blue-500"> Yarn</span>
         </h1>
         <form>
@@ -28,6 +28,10 @@ export default function Login() {
 
             <a href="" className="link link-primary">
               Don't have an account?
+            </a>
+
+            <a href="" className="link link-primary">
+              Forgot your password?
             </a>
 
             <div>
