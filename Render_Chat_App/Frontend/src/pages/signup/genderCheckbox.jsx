@@ -1,4 +1,4 @@
-export default function GenderCheckbox() {
+export default function GenderCheckbox({ onGenderChange, selectedGender }) {
   return (
     <div className="flex flex-col gap-2">
       <label className="text-sm font-medium text-gray-300">Gender</label>
@@ -11,6 +11,8 @@ export default function GenderCheckbox() {
             name="gender"
             value="male"
             className="checkbox checkbox-primary checkbox-sm"
+            checked={selectedGender === "male"}
+            onChange={() => onGenderChange("male")}
           />
           <span>Male</span>
         </label>
@@ -22,6 +24,8 @@ export default function GenderCheckbox() {
             name="gender"
             value="female"
             className="checkbox checkbox-secondary checkbox-sm"
+            checked={selectedGender === "female"}
+            onChange={() => onGenderChange("female")}
           />
           <span>Female</span>
         </label>

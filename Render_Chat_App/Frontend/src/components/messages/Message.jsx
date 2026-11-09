@@ -1,39 +1,37 @@
-const Message = () => {
+import { useAuthContext } from "../../context/AuthContext";
+import useConversationStore from "../../store/useConversation";
+import { extractTime } from "../../utils/extractTime";
+
+const Message = ({ message }) => {
+  const { authUser } = useAuthContext();
+  const { selectedConversation } = useConversationStore();
+
+  const fromMe = message.senderId === authUser?._id;
+
+  const formattedTime = extractTime(message.createdAt);
+
+  const chatClassName = fromMe ? "chat chat-end" : "chat chat-start";
+  const profilePicture = fromMe
+    ? authUser?.profilePicture
+    : selectedConversation?.profilePicture;
+
+  const bubbleBgColor = fromMe ? "bg-blue-500" : "bg-gray-700";
+
   return (
-    <>
-      <div className="chat chat-start">
-        <div className="chat-image avatar">
-          <div className="w-10 rounded-full">
-            <img
-              alt="Tailwind CSS chat bubble component"
-              src="https://img.daisyui.com/images/profile/demo/kenobee@192.webp"
-            />
-          </div>
+    <div className={`chat ${chatClassName}`}>
+      <div className="chat-image avatar">
+        <div className="w-10 rounded-full">
+          <img alt="User Avatar" src={profilePicture} />
         </div>
-        <div className="chat-header">
-          Obi-Wan Kenobi
-          <time className="text-xs opacity-50">12:45</time>
-        </div>
-        <div className="chat-bubble">You were the Chosen One!</div>
-        <div className="chat-footer opacity-50">Delivered</div>
       </div>
-      <div className="chat chat-end">
-        <div className="chat-image avatar">
-          <div className="w-10 rounded-full">
-            <img
-              alt="Tailwind CSS chat bubble component"
-              src="https://img.daisyui.com/images/profile/demo/anakeen@192.webp"
-            />
-          </div>
-        </div>
-        <div className="chat-header">
-          Anakin
-          <time className="text-xs opacity-50">12:46</time>
-        </div>
-        <div className="chat-bubble">I hate you!</div>
-        <div className="chat-footer opacity-50">Seen at 12:46</div>
+      <div className="chat-header">
+        <time className="text-xs opacity-50">{formattedTime}</time>
       </div>
-    </>
+      <div className={`chat-bubble text-white ${bubbleBgColor}`}>
+        {message.message}
+      </div>
+      <div className="chat-footer opacity-50">Delivered</div>
+    </div>
   );
 };
 
