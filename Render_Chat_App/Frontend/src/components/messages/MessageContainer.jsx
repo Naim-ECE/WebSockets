@@ -1,19 +1,31 @@
+import { useEffect } from "react";
+import useConversationStore from "../../store/useConversation";
 import MessageInput from "./MessageInput";
 import Messages from "./Messages";
 import { IoChatbubblesOutline } from "react-icons/io5";
+import { useAuthContext } from "../../context/AuthContext";
 
 const MessageContainer = () => {
-  const noChatSelected = true;
+  const { selectedConversation, setSelectedConversation } =
+    useConversationStore();
+  const { authUser } = useAuthContext();
+
+  useEffect(() => {
+    // on cleanup, reset the selected conversation to null when the component unmounts
+    return () => setSelectedConversation(null);
+  }, []);
   return (
     <div className="flex-1 p-2 md:min-w-112.5 flex flex-col">
-      {noChatSelected ? (
-        <NoChatSelected />
+      {!selectedConversation ? (
+        <NoChatSelected username={authUser?.username} />
       ) : (
         <>
           {/* Header */}
           <div className="bg-slate-500 px-4 py-2 mb-2">
             <span className="label-text">To: </span>
-            <span className="text-gray-900 font-bold">John Doe</span>
+            <span className="text-white font-bold">
+              {selectedConversation.fullName}
+            </span>
           </div>
           <Messages />
           <MessageInput />
@@ -25,7 +37,7 @@ const MessageContainer = () => {
 
 export default MessageContainer;
 
-const NoChatSelected = ({ username = "John Doe" }) => {
+const NoChatSelected = ({ username }) => {
   return (
     // h-full w-full ensures it takes up the entire right side of the screen
     <div className="flex flex-col items-center justify-center w-full h-full text-center px-4">
