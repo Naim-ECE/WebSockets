@@ -16,6 +16,7 @@ const Message = ({ message }) => {
     : selectedConversation?.profilePicture;
 
   const bubbleBgColor = fromMe ? "bg-blue-500" : "bg-gray-700";
+  const fadeandGlowClass = message.shouldFadeandGlow ? "fadeGlow" : "";
 
   return (
     <div className={`chat ${chatClassName}`}>
@@ -27,7 +28,9 @@ const Message = ({ message }) => {
       <div className="chat-header">
         <time className="text-xs opacity-50">{formattedTime}</time>
       </div>
-      <div className={`chat-bubble text-white ${bubbleBgColor}`}>
+      <div
+        className={`chat-bubble text-white ${bubbleBgColor} ${fadeandGlowClass}`}
+      >
         {message.message}
       </div>
       <div className="chat-footer opacity-50">Delivered</div>
