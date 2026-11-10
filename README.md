@@ -62,7 +62,10 @@ CLOSE
 ## io -> whole circuit (a set of clients)
 ## socket -> individual client
 
-<img  align="center" src="https://media1.tenor.com/m/_mQwj8JmH_gAAAAC/pikachu-correndo-pok%C3%A9mon.gif" alt="Pikachu Running" width="300" />
+<p align="center">
+  <img src="https://media1.tenor.com/m/_mQwj8JmH_gAAAAC/pikachu-correndo-pok%C3%A9mon.gif" alt="Pikachu Running" width="300" />  
+</p>
+
 
 # ⚡ Socket.IO Cheatsheet
 
