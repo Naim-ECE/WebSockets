@@ -1,46 +1,44 @@
 import { useEffect, useState } from "react";
 import useConversationStore from "../store/useConversation";
-import toast from "react-hot-toast";
 
 const useGetMessages = () => {
   const [loading, setLoading] = useState(false);
-  const { messages, setMessages, selectedConversation } =
-    useConversationStore();
+  const { setMessages, selectedConversation } = useConversationStore();
+
   useEffect(() => {
     const getMessages = async () => {
+      if (!selectedConversation?._id) return;
+
       setLoading(true);
-      setMessages([]); // Clear previous messages when fetching new ones
+      setMessages([]);
+
       try {
         const response = await fetch(
           `/api/messages/${selectedConversation._id}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          },
         );
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Failed to get messages");
-        }
         const data = await response.json();
+
+        if (!response.ok) {
+          setMessages([]);
+          return;
+        }
+
         setMessages(data.data || []);
+
+        await fetch(`/api/messages/seen/${selectedConversation._id}`, {
+          method: "PUT",
+        });
       } catch (error) {
-        toast.error(
-          error.message || "An error occurred while fetching messages",
-        );
+        setMessages([]);
       } finally {
         setLoading(false);
       }
     };
 
-    if (selectedConversation?._id) {
-      getMessages();
-    }
+    getMessages();
   }, [selectedConversation?._id, setMessages]);
 
-  return { messages, loading };
+  return { loading };
 };
 
 export default useGetMessages;

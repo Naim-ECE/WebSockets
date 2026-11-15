@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import useConversationStore from "../../store/useConversation";
 import MessageInput from "./MessageInput";
 import Messages from "./Messages";
-import { IoChatbubblesOutline } from "react-icons/io5";
+import { IoChatbubblesOutline, IoArrowBack } from "react-icons/io5";
 import { useAuthContext } from "../../context/AuthContext";
 
 const MessageContainer = () => {
@@ -11,22 +11,34 @@ const MessageContainer = () => {
   const { authUser } = useAuthContext();
 
   useEffect(() => {
-    // on cleanup, reset the selected conversation to null when the component unmounts
     return () => setSelectedConversation(null);
-  }, []);
+  }, [setSelectedConversation]);
+
   return (
-    <div className="flex-1 p-2 md:min-w-112.5 flex flex-col">
+    <div className="flex-1 flex flex-col w-full h-full bg-black/20 backdrop-blur-md">
       {!selectedConversation ? (
         <NoChatSelected username={authUser?.username} />
       ) : (
         <>
-          {/* Header */}
-          <div className="bg-slate-500 px-4 py-2 mb-2">
-            <span className="label-text">To: </span>
-            <span className="text-white font-bold">
-              {selectedConversation.fullName}
-            </span>
+          {/* Header with Mobile Back Button */}
+          <div className="flex items-center bg-gray-800/80 px-4 py-3 border-b border-gray-700 shadow-sm">
+            <button
+              className="md:hidden mr-3 text-gray-300 hover:text-white transition-all active:scale-90"
+              onClick={() => setSelectedConversation(null)}
+            >
+              <IoArrowBack className="text-xl" />
+            </button>
+            <div className="w-8 h-8 rounded-full overflow-hidden mr-3 border border-gray-600">
+              <img src={selectedConversation.profilePicture} alt="avatar" />
+            </div>
+            <div>
+              <span className="text-gray-400 text-xs block">To:</span>
+              <span className="text-white font-bold">
+                {selectedConversation.fullName}
+              </span>
+            </div>
           </div>
+
           <Messages />
           <MessageInput />
         </>
@@ -39,22 +51,15 @@ export default MessageContainer;
 
 const NoChatSelected = ({ username }) => {
   return (
-    // h-full w-full ensures it takes up the entire right side of the screen
     <div className="flex flex-col items-center justify-center w-full h-full text-center px-4">
-      {/* Welcome Text */}
-      <div className="flex items-center gap-2 text-xl sm:text-2xl font-semibold text-white tracking-wide">
+      <div className="flex flex-wrap justify-center items-center gap-2 text-2xl font-semibold text-white tracking-wide">
         <span>Welcome 👋</span>
-        <span>{username}</span>
-        <span>❄️</span>
+        <span className="text-blue-400">{username || "User"}</span>
       </div>
-
-      {/* Subtext */}
-      <p className="mt-2 text-sm sm:text-base text-gray-200 font-medium">
+      <p className="mt-2 text-sm text-gray-400 font-medium">
         Select a chat to start messaging
       </p>
-
-      {/* Chat Bubbles Icon */}
-      <IoChatbubblesOutline className="mt-4 text-6xl sm:text-7xl text-white/90" />
+      <IoChatbubblesOutline className="mt-6 text-7xl text-gray-600 animate-pulse" />
     </div>
   );
 };

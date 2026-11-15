@@ -5,7 +5,6 @@ import useLogin from "../../hooks/useLogin";
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
   const { login, loading } = useLogin();
 
   const handleSubmit = async (e) => {
@@ -14,51 +13,61 @@ export default function Login() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-w-96 mx-auto">
-      <div className="shadow-md w-full bg-yellow-700/20 rounded-lg backdrop-blur-lg border border-gray-100 p-6">
-        <h1 className="text-3xl font-semibold text-center text-gray-300">
+    <div className="flex flex-col items-center justify-center w-full max-w-sm mx-auto p-4">
+      <div className="shadow-2xl w-full bg-gray-800/40 rounded-2xl backdrop-blur-xl border border-gray-700 p-8">
+        <h1 className="text-3xl font-semibold text-center text-white mb-6">
           Login to
           <span className="text-blue-500"> Yarn</span>
         </h1>
-        <form onSubmit={handleSubmit}>
-          <div className="flex flex-col">
-            <label className="label p-2" />
-            <span className="text-base label-text">Username</span>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div className="form-control w-full">
+            <label className="label pb-1">
+              <span className="text-sm font-medium text-gray-300">
+                Username
+              </span>
+            </label>
             <input
               type="text"
               placeholder="Enter username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="input input-ghost mt-2"
+              className="input w-full bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white transition-all"
             />
+          </div>
 
-            <label className="label p-2" />
-            <span className="text-base label-text">Password</span>
+          <div className="form-control w-full">
+            <label className="label pb-1">
+              <span className="text-sm font-medium text-gray-300">
+                Password
+              </span>
+            </label>
             <input
               type="password"
               placeholder="Enter password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="input input-ghost mt-2"
+              className="input w-full bg-gray-900/50 border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white transition-all"
             />
-
-            <Link
-              to="/signup"
-              className="link text-blue-400 hover:text-blue-600 active:text-black"
-            >
-              Don't have an account?
-            </Link>
-
-            <div>
-              <button className="btn btn-block btn-md mt-2" disabled={loading}>
-                {loading ? (
-                  <span className="loading loading-spinner loading-lg"></span>
-                ) : (
-                  "Login"
-                )}
-              </button>
-            </div>
           </div>
+
+          <Link
+            to="/signup"
+            className="text-sm text-blue-400 hover:text-blue-300 transition-colors text-center mt-2"
+          >
+            Don't have an account?
+          </Link>
+
+          <button
+            className="btn w-full mt-4 bg-blue-600 hover:bg-blue-500 border-none text-white shadow-lg shadow-blue-500/30 transition-all active:scale-95"
+            disabled={loading}
+          >
+            {loading ? (
+              <span className="loading loading-spinner"></span>
+            ) : (
+              "Login"
+            )}
+          </button>
         </form>
       </div>
     </div>

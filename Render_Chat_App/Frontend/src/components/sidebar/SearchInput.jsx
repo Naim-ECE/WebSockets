@@ -11,7 +11,6 @@ const SearchInput = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (!search.trim()) return;
 
     const foundConversation = conversations?.find((conversation) =>
@@ -20,7 +19,7 @@ const SearchInput = () => {
 
     if (foundConversation) {
       setSelectedConversation(foundConversation);
-      setSearch(""); // Clear search on success
+      setSearch("");
     } else {
       toast.error("No user found with that name.");
     }
@@ -29,9 +28,10 @@ const SearchInput = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-700/20 backdrop-blur-lg border-none"
+      // Native Tailwind Neon Glow on focus-within
+      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-700/20 backdrop-blur-lg border border-gray-600 transition-all duration-300 focus-within:border-blue-500 focus-within:shadow-[0_0_15px_rgba(59,130,246,0.5)]"
     >
-      <label className="input rounded-lg w-full">
+      <label className="input rounded-lg w-full flex items-center gap-2 bg-transparent">
         <svg
           className="h-[1em] opacity-50"
           xmlns="http://www.w3.org/2000/svg"
@@ -54,11 +54,12 @@ const SearchInput = () => {
           placeholder="Search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          className="bg-transparent focus:outline-none w-full text-white placeholder-gray-400"
         />
       </label>
 
       <button
-        className="btn btn-circle bg-sky-400 text-white hover:bg-sky-500 border-none"
+        className="btn btn-circle btn-sm bg-sky-400 text-white hover:bg-sky-500 border-none"
         type="submit"
       >
         <FaSearch />

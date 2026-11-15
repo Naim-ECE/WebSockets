@@ -34,7 +34,7 @@ export default function SignUp() {
       {loading ? (
         <span className="loading loading-spinner loading-lg"></span>
       ) : (
-        <div className="shadow-md w-full bg-yellow-700/20 rounded-lg backdrop-blur-lg border border-gray-100 p-6">
+        <div className="shadow-md w-full bg-gray-700/20 rounded-lg backdrop-blur-lg border border-gray-100 p-6">
           <h1 className="text-3xl font-semibold text-center text-gray-300">
             SignUp to
             <span className="text-blue-500"> Yarn</span>

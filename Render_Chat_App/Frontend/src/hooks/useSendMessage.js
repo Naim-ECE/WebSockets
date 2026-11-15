@@ -6,34 +6,31 @@ const useSendMessage = () => {
   const [loading, setLoading] = useState(false);
   const { setMessages, selectedConversation } = useConversationStore();
 
-  const sendMessage = async (message) => {
+  const sendMessage = async (message, imageFile) => {
     setLoading(true);
     try {
+      const formData = new FormData();
+      formData.append("message", message);
+      if (imageFile) {
+        formData.append("image", imageFile);
+      }
+
       const response = await fetch(
         `/api/messages/send/${selectedConversation._id}`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ message }),
+          body: formData, // No Content-Type header needed with FormData
         },
       );
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to send message");
-      }
+
       const data = await response.json();
+      if (!response.ok)
+        throw new Error(data.message || "Failed to send message");
 
       const currentMessages = useConversationStore.getState().messages;
-      const safeMessages = Array.isArray(currentMessages)
-        ? currentMessages
-        : [];
-      setMessages([...safeMessages, data.data || data]);
+      setMessages([...(currentMessages || []), data.data]);
     } catch (error) {
-      toast.error(
-        error.message || "An error occurred while sending the message",
-      );
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }

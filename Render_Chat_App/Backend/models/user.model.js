@@ -28,6 +28,9 @@ const userSchema = new mongoose.Schema(
           : "https://png.pngtree.com/png-vector/20241124/ourlarge/pngtree-detailed-anime-portrait-of-a-female-character-png-image_14191504.png";
       },
     },
+    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    sentRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    receivedRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },
 
   // createdAt and updatedAt fields will be automatically added to the schema => Member since 2024-06-10
