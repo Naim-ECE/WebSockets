@@ -10,6 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@babel/core": "^7.29.7",
+    "@rolldown/plugin-babel": "^0.2.3",
+    "@vitejs/plugin-react": "^6.1.1",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "daisyui": "^5.7.47",
+    "vite": "^8.3.0",
     "@tailwindcss/vite": "^4.3.3",
     "gsap": "^3.15.1",
     "react": "^19.2.8",

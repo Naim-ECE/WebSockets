@@ -30,7 +30,7 @@ app.use("/api/users", userRoutes);
 app.use(express.static(path.join(__dirname, "Frontend/dist")));
 
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "Frontend/dist", "index.html"));
+  res.sendFile(path.join(__dirname, "Frontend", "dist", "index.html"));
 });
 
 server.listen(PORT, () => {
